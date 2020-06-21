@@ -9,6 +9,7 @@ import 'package:flutter/painting.dart' as prefix0;
 import 'package:flutter/widgets.dart';
 import 'package:notes/data/models.dart';
 import 'package:notes/services/database.dart';
+import 'package:notes/services/webapi.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
 class EditNotePage extends StatefulWidget {
@@ -178,6 +179,12 @@ class _EditNotePageState extends State<EditNotePage> {
       currentNote.content = contentController.text;
       print('Hey there ${currentNote.content}');
     });
+
+    getMessage(currentNote.content).then((value) =>
+        Scaffold.of(context).showSnackBar(
+            new SnackBar(content: Text(value.entities.elementAt(0).value)))
+    ).catchError((error) => print('Error in API request\n' + error));
+
     if (isNoteNew) {
       var latestNote = await NotesDatabaseService.db.addNoteInDB(currentNote);
       setState(() {
